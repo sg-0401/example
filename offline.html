@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoteVault – Offline</title>
+  <style>
+    :root { --accent: #f4c542; --bg: #0d0d14; --surface: #16161f; --text: #f0eff8; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .container { max-width: 400px; }
+    .icon { font-size: 4rem; margin-bottom: 20px; }
+    h1 { font-size: 1.8rem; margin-bottom: 12px; font-weight: 700; }
+    p { color: #7a7994; line-height: 1.6; margin-bottom: 28px; }
+    a {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      padding: 12px 28px;
+      border-radius: 99px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    a:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📡</div>
+    <h1>You're Offline</h1>
+    <p>NoteVault is currently offline. Your notes are safely stored locally and will sync when you reconnect.</p>
+    <a href="./index.html">← Back to Notes</a>
+  </div>
+</body>
+</html>

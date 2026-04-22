@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="A professional offline-capable Notes Manager PWA" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NoteVault" />
+
+  <title>NoteVault – Smart Notes Manager</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="offline-banner hidden">
+    <span>⚡ Offline Mode – Changes saved locally</span>
+  </div>
+
+  <!-- Install Prompt -->
+  <div id="install-prompt" class="install-prompt hidden">
+    <div class="install-content">
+      <span class="install-icon">📥</span>
+      <div>
+        <strong>Install NoteVault</strong>
+        <p>Add to home screen for the best experience</p>
+      </div>
+    </div>
+    <div class="install-actions">
+      <button id="install-btn" class="btn-install">Install</button>
+      <button id="dismiss-btn" class="btn-dismiss">✕</button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">🗒</span>
+        <span class="logo-text">NoteVault</span>
+      </div>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close sidebar">✕</button>
+    </div>
+
+    <div class="sidebar-stats">
+      <div class="stat">
+        <span class="stat-num" id="total-count">0</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="pinned-count">0</span>
+        <span class="stat-label">Pinned</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="tag-count">0</span>
+        <span class="stat-label">Tags</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-filter="all">
+        <span class="nav-icon">📄</span> All Notes
+      </button>
+      <button class="nav-item" data-filter="pinned">
+        <span class="nav-icon">📌</span> Pinned
+      </button>
+      <button class="nav-item" data-filter="recent">
+        <span class="nav-icon">🕐</span> Recent
+      </button>
+    </nav>
+
+    <div class="sidebar-tags">
+      <p class="tags-title">Tags</p>
+      <div id="tags-list" class="tags-list"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn-export" id="export-btn">⬇ Export All</button>
+      <button class="btn-clear" id="clear-btn">🗑 Clear All</button>
+    </div>
+  </aside>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Search notes…" autocomplete="off" />
+        <button id="search-clear" class="search-clear hidden">✕</button>
+      </div>
+      <div class="topbar-actions">
+        <button class="view-toggle" id="view-toggle" title="Toggle view">⊞</button>
+        <button class="sort-btn" id="sort-btn" title="Sort notes">⇅</button>
+      </div>
+    </header>
+
+    <!-- Notes Area -->
+    <section class="notes-area">
+      <div class="notes-header">
+        <h1 class="section-title" id="section-title">All Notes</h1>
+        <span class="note-count-badge" id="note-count-badge">0 notes</span>
+      </div>
+
+      <div id="notes-grid" class="notes-grid">
+        <!-- notes rendered here -->
+      </div>
+
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">✍️</div>
+        <h2>No notes yet</h2>
+        <p>Click the + button to create your first note</p>
+      </div>
+    </section>
+
+    <!-- FAB -->
+    <button class="fab" id="fab-btn" aria-label="New note">+</button>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <input type="text" id="note-title" class="note-title-input" placeholder="Note title…" maxlength="80" />
+        <div class="modal-header-actions">
+          <button class="modal-pin" id="modal-pin" title="Pin note">📌</button>
+          <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-toolbar">
+        <select id="note-category" class="note-category">
+          <option value="">📂 Category</option>
+          <option value="work">💼 Work</option>
+          <option value="personal">🏠 Personal</option>
+          <option value="ideas">💡 Ideas</option>
+          <option value="shopping">🛒 Shopping</option>
+          <option value="health">❤️ Health</option>
+        </select>
+        <input type="text" id="note-tags" class="note-tags-input" placeholder="🏷 Tags (comma separated)" />
+        <select id="note-color" class="note-color">
+          <option value="default">🎨 Color</option>
+          <option value="yellow">🟡 Yellow</option>
+          <option value="blue">🔵 Blue</option>
+          <option value="green">🟢 Green</option>
+          <option value="red">🔴 Red</option>
+          <option value="purple">🟣 Purple</option>
+        </select>
+      </div>
+
+      <textarea id="note-body" class="note-body-input" placeholder="Write your note here…" rows="10"></textarea>
+
+      <div class="modal-footer">
+        <span class="char-count" id="char-count">0 characters</span>
+        <div class="modal-footer-btns">
+          <button class="btn-cancel" id="btn-cancel">Cancel</button>
+          <button class="btn-save" id="btn-save">Save Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="delete-overlay">
+    <div class="modal confirm-modal" role="dialog">
+      <div class="confirm-icon">🗑️</div>
+      <h2>Delete Note?</h2>
+      <p>This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" id="delete-cancel">Cancel</button>
+        <button class="btn-delete-confirm" id="delete-confirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
